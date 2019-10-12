@@ -1,0 +1,18 @@
+apply plugin: 'findbugs'
+
+findbugs {
+    sourceSets = [sourceSets.main]
+    ignoreFailures = true
+    reportsDir = file("${project.buildDir}/reports/findbugs")
+    effort = "max"
+    reportLevel = "low"
+    includeFilter = file("$rootProject.projectDir/config/findbugs/includeFilter.xml")
+    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilter.xml")
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = true
+        html.enabled = false
+    }
+}

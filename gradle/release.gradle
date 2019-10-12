@@ -1,0 +1,16 @@
+
+apply plugin: 'io.github.robwin.jgitflow'
+
+task cutRelease {
+    dependsOn 'releaseStart'
+    dependsOn 'releasePublish'
+    tasks.findByName('releasePublish').mustRunAfter 'releaseStart'
+}
+
+project.ext."releaseVersion" = "$project.version".replaceAll(/-\w+/, "")
+project.ext."newVersion" = getNewVersion
+
+def getGetNewVersion() {
+    def versions = "$project.version".replaceAll(/-\w+/, "").split('\\.')
+    return versions[0] + '.' + (Integer.parseInt(versions[1]) + 1) + '.0-SNAPSHOT'
+}

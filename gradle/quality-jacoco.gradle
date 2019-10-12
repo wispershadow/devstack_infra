@@ -1,0 +1,20 @@
+apply plugin: 'jacoco'
+
+jacocoTestReport {
+    dependsOn test
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+
+    reports {
+        xml.enabled = true
+        xml.destination = "${project.buildDir}/reports/jacoco/xml"
+        csv.enabled = false
+        html {
+            enabled = true
+            destination = "${project.buildDir}/reports/jacoco/html"
+        }
+    }
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}
+
+build.dependsOn("jacocoTestReport")

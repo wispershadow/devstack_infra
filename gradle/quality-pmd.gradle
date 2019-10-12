@@ -1,0 +1,9 @@
+apply plugin: 'pmd'
+
+dependencies {
+    pmd "net.sourceforge.pmd:pmd:$pmdVersion"
+}
+
+pmd {
+    consoleOutput = true
+}

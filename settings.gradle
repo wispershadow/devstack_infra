@@ -1,0 +1,8 @@
+rootProject.name = 'infra-parent'
+
+
+include 'common'
+include 'schema'
+include 'akka'
+include 'configure'
+include ':distributed:raft'

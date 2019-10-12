@@ -1,0 +1,42 @@
+apply plugin: 'checkstyle'
+
+ext.checkstyleConfigDir = "$rootDir/config/checkstyle"
+
+checkstyle {
+    toolVersion = "6.1.1"
+    configProperties = [
+            "checkstyle.cache.file": rootProject.file("build/checkstyle.cache"),
+            "checkstyleConfigDir"  : checkstyleConfigDir
+    ]
+    ignoreFailures = false
+    showViolations = true
+}
+
+checkstyleMain {
+    configFile = new File(checkstyleConfigDir, "main-checkstyle-config.xml")
+}
+
+// Generate html report
+checkstyleMain << {
+    ant.xslt(in: reports.xml.destination,
+            style: new File(checkstyleConfigDir, "checkstyle-noframes-sorted.xsl"),
+            out: new File(reports.xml.destination.parent, "main.html"))
+}
+
+checkstyleTest {
+    configFile = new File(checkstyleConfigDir, "test-checkstyle-config.xml")
+    ignoreFailures = true // ignoring for now..
+}
+
+checkstyleIntegrationTest {
+    configFile = new File(checkstyleConfigDir, "test-checkstyle-config.xml")
+    ignoreFailures = true // ignoring for now..
+
+}
+
+// Generate html report
+checkstyleTest << {
+    ant.xslt(in: reports.xml.destination,
+            style: new File(checkstyleConfigDir, "checkstyle-noframes-sorted.xsl"),
+            out: new File(reports.xml.destination.parent, "test.html"))
+}

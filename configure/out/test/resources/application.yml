@@ -1,0 +1,7 @@
+core:
+  property1: "value1"
+  property2: "value2"
+  additional:
+    value1: "whatever"
+
+
