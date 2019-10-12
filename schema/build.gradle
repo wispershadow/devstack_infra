@@ -1,3 +1,5 @@
 dependencies {
+    implementation("org.springframework:spring-core")
+    implementation("org.springframework:spring-context")
     implementation("net.bytebuddy:byte-buddy")
 }
