@@ -8,25 +8,27 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 import org.springframework.core.env.ConfigurableEnvironment
 
-class ProperyReloadEventListener: ApplicationContextAware {
+class PropertyReloadEventListener: ApplicationContextAware {
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(ProperyReloadEventListener::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(PropertyReloadEventListener::class.java)
     }
     private lateinit var applicationContext: ApplicationContext
     override fun setApplicationContext(applicationContext: ApplicationContext) {
         this.applicationContext = applicationContext
     }
 
-    fun reload() {
+    fun reload(changedProperties: Map<String, Any>) {
+        logger.info("Reloading properties: ")
         val environment = applicationContext.environment
         if (environment is ConfigurableEnvironment) {
             environment.propertySources.forEach { ps ->
                 if (ps is ReloadablePropertySource) {
-
+                    changedProperties.forEach { (key, value) ->
+                        ps.setProperty(key, value)
+                    }
                 }
             }
         }
-
     }
 
     /**
