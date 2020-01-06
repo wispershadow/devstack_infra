@@ -1,6 +1,7 @@
 dependencies {
+    compile project(":configure")
     compileOnly("com.google.auto.service:auto-service:1.0-rc6")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.apache.curator:curator-recipes:2.13.0")
     kapt("com.google.auto.service:auto-service:1.0-rc6")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

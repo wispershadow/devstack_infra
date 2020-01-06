@@ -6,7 +6,7 @@ import io.wispershadow.infra.configure.compress.ConfigureDataCompressorType
 import java.io.OutputStream
 
 @AutoService(ConfigureDataCompressor::class)
-class NoneCompressor: ConfigureDataCompressor {
+class NoneCompressor : ConfigureDataCompressor {
     override val name = ConfigureDataCompressorType.NONE.name
 
     override val code = ConfigureDataCompressorType.NONE.code

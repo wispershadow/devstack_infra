@@ -1,0 +1,1 @@
+io.wispershadow.infra.configure.spring.PropertyReloadExtConfig=io.wispershadow.infra.configure.spring.DummyPropReloadExtConfig

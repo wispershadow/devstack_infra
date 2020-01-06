@@ -9,9 +9,8 @@ class MainAppl {
         @JvmStatic
         fun main(args: Array<String>) {
             System.setProperty("spring.profiles.active", "local")
-            SpringApplicationBuilder(TestConfiguration1::class.java, TestConfiguration2::class.java, CustomPropertiesConfig::class.java)
+            SpringApplicationBuilder(TestConfiguration1::class.java, TestConfiguration2::class.java)
                 .run(*args)
-
         }
     }
 }

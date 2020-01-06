@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
 
-
 enum class ConfigureDataCompressorType(val code: Byte) {
     NONE('0'.toByte())
 }
@@ -53,7 +52,6 @@ object ConfigureDataCompressors {
                 ?: throw IllegalArgumentException(String.format("Unrecognized job config compressor code %d", code))
     }
 
-
     fun compress(compressor: ConfigureDataCompressor, data: ByteArray): ByteArray {
         val outputStream = getOutputStream()
         return try {
@@ -83,7 +81,6 @@ object ConfigureDataCompressors {
         return getCompressorByCode(code)
     }
 
-
     private fun decompress(compressor: ConfigureDataCompressor, data: ByteArray): ByteArray {
         val outputStream = getOutputStream()
         return try {
@@ -101,8 +98,5 @@ object ConfigureDataCompressors {
     }
 
     private fun releaseOutputStream(outputStream: ByteArrayOutputStream) {
-
     }
-
-
 }
