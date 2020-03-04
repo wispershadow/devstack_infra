@@ -16,9 +16,7 @@ class CostMatrix {
     }
 
     fun load() {
-
     }
-
 
     fun computeAndExtractRowMinimum(rowIndex: Int): HeaderMetadata {
         val minRowValWithInd = costValueHolder[rowIndex].withIndex().minBy { indexedValue -> indexedValue.value }
@@ -26,7 +24,7 @@ class CostMatrix {
             rowHeadersMetadata[rowIndex].minIndex = it.index
             rowHeadersMetadata[rowIndex].minValue = it.value
             var zeroCount = 0
-            costValueHolder[rowIndex].forEachIndexed {colIndex, value ->
+            costValueHolder[rowIndex].forEachIndexed { colIndex, value ->
                 val diff = value - minRowValWithInd.value
                 costValueHolder[rowIndex][colIndex] = diff
                 if (diff == 0.0) {
@@ -39,25 +37,21 @@ class CostMatrix {
     }
 
     fun computeAndExtractColMinimum(colIndex: Int): HeaderMetadata {
-        val minColValWithInd = costValueHolder.mapIndexed {rowIndex, curRow ->
+        val minColValWithInd = costValueHolder.mapIndexed { rowIndex, curRow ->
             rowIndex to curRow[colIndex]
         }.toList().minBy { pair -> pair.second }
         minColValWithInd?.let {
             colHeadersMetadata[colIndex].minIndex = it.first
             colHeadersMetadata[colIndex].minValue = it.second
             var zeroCount = 0
-            costValueHolder.forEachIndexed {rowIndex, value ->
-
+            costValueHolder.forEachIndexed { rowIndex, value ->
             }
         }
         return colHeadersMetadata[colIndex]
     }
 
-
     fun isMatrixsAssignable() {
-
     }
-
 }
 
 class HeaderMetadata {

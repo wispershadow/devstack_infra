@@ -19,7 +19,6 @@ open class SchemaClassGenerator {
         private val logger: Logger = LoggerFactory.getLogger(SchemaClassGenerator::class.java)
     }
 
-
     private val columnTypeToJavaClassMapping = mapOf<ColumnType, Class<*>>(
         ColumnType.STRING to String::class.java,
         ColumnType.INT to Int::class.java,

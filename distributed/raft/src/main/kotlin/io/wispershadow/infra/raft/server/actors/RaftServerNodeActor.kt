@@ -4,31 +4,104 @@ import akka.actor.AbstractActor
 import akka.actor.ActorRef
 import akka.actor.Cancellable
 import akka.event.Logging
+import io.wispershadow.infra.raft.server.rpc.RaftRpcRequest
+import io.wispershadow.infra.raft.server.rpc.RaftRpcResponse
+import io.wispershadow.infra.raft.server.state.RaftServerNodeState
+import io.wispershadow.infra.raft.server.state.RaftServerRole
+import java.lang.Exception
+import java.time.Duration
+import java.util.*
+import kotlin.random.Random
 
-class RaftServerNodeActor: AbstractActor() {
+class RaftServerNodeActor : AbstractActor() {
     private val log = Logging.getLogger(context.system(), this)
     private val peerNodeActorRefs = mutableMapOf<String, ActorRef>()
-    private val followerReceive: Receive = buildFollowerReceive()
-    private val candidateReceive: Receive = buildCandidateReceive()
-    private val leaderReceive: Receive = buildLeaderReceive()
-    private val schedulers = mutableMapOf<String, Cancellable>()
 
+    private val schedulersByTerm: NavigableMap<Long, MutableList<Cancellable>> =
+            TreeMap<Long, MutableList<Cancellable>>()
+    private var currentServerNodeState: RaftServerNodeState = RaftServerNodeState(generateServerId())
 
-
-    private fun buildFollowerReceive(): Receive {
-        return receiveBuilder().build()
-    }
-
-    private fun buildCandidateReceive(): Receive {
-        return receiveBuilder().build()
-    }
-
-    private fun buildLeaderReceive(): Receive {
-        return receiveBuilder().build()
-    }
-
+    class ElectionTimeoutMessage()
 
     override fun createReceive(): Receive {
-        return receiveBuilder().build()
+        return receiveBuilder()
+                .match(RaftRpcRequest::class.java) {
+                }
+                .match(RaftRpcResponse::class.java) {
+                }
+                .match(ElectionTimeoutMessage::class.java) {
+                }
+                .matchAny {
+                }
+                .build()
+    }
+
+    private fun bootstrap() {
+        // todo: load persist state, discover peer
+    }
+
+    private fun generateServerId(): String {
+        return UUID.randomUUID().toString()
+    }
+
+    /*
+    Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly.
+    To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval
+    (e.g., 150–300ms)
+     */
+    private fun getNextElectionTimeoutMs(): Long {
+        return Random.Default.nextLong(150, 300)
+    }
+
+    private fun becomeFollower() {
+        val currentTerm = currentServerNodeState.currentTerm()
+        log.info("Raft server: {} becomes follower for term: {}", currentServerNodeState.serverId,
+                currentTerm)
+        currentServerNodeState.raftServerRole = RaftServerRole.FOLLOWER
+        val nextElectionTimeout = getNextElectionTimeoutMs()
+        /*
+         If a follower receives no communication over a period of time called the election timeout,
+         then it assumes there is no viable leader and begins an election to choose a new leader
+         */
+        val electionTimeoutFuture = context.system.scheduler.scheduleOnce(Duration.ofMillis(nextElectionTimeout), self, ElectionTimeoutMessage(),
+                context.system.dispatcher(), ActorRef.noSender())
+        schedulersByTerm.computeIfAbsent(currentTerm) {
+            mutableListOf()
+        }.add(electionTimeoutFuture)
+    }
+
+    private fun cleanUpPrevTermSchedulers(curTerm: Long) {
+        val headerMap = schedulersByTerm.headMap(curTerm, false)
+        headerMap.forEach { (term, schedules) ->
+            schedules.forEach {
+                try {
+                    it.cancel()
+                } catch (e: Exception) {
+                    log.error("Error cancelling scheduler for term = {}, ")
+                }
+            }
+        }
+        headerMap.clear()
+    }
+
+    private fun handleAppendRpcResponse() {
+    }
+
+    private fun newElectionOnTimeout() {
+        val curTerm = currentServerNodeState.currentTerm()
+        val newTerm = increaseTerm(curTerm,
+                currentServerNodeState.serverId, RaftServerRole.CANDIDATE)
+        log.info("Raft server: {} becomes candidate for term: {}", currentServerNodeState.serverId,
+                newTerm)
+        currentServerNodeState.raftServerRole = RaftServerRole.CANDIDATE
+        cleanUpPrevTermSchedulers(curTerm)
+    }
+
+    /*
+     Increase term by 1 and must call persistStateManager to persist it
+     New role will be either Leader or Follower depending on the increasing term is started by
+     */
+    private fun increaseTerm(curTerm: Long, serverId: String, newRole: RaftServerRole): Long {
+        return 0
     }
 }

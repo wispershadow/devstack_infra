@@ -1,12 +1,10 @@
 package io.wispershadow.infra.configure.spring
 
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.core.env.EnumerablePropertySource
 
 class ReloadablePropertySource(key: String, properties: Map<String, Any>) :
         EnumerablePropertySource<Map<String, Any>>(key, properties) {
     private val editableProperties = mutableMapOf<String, Any>()
-    var reloadPropertyEventPublisher: ApplicationEventPublisher? = null
 
     init {
         editableProperties.putAll(properties)
@@ -22,6 +20,21 @@ class ReloadablePropertySource(key: String, properties: Map<String, Any>) :
 
     fun setProperty(name: String, value: Any) {
         editableProperties[name] = value
-        reloadPropertyEventPublisher?.publishEvent(PropertyReloadedEvent(mapOf(name to value)))
+    }
+
+    fun removeProperty(name: String) {
+        editableProperties.remove(name)
+    }
+
+    fun setProperties(props: Map<String, Any>) {
+        props.forEach { (key, value) ->
+            editableProperties[key] = value
+        }
+    }
+
+    fun removeProperties(names: Iterable<String>) {
+        names.forEach { name ->
+            editableProperties.remove(name)
+        }
     }
 }

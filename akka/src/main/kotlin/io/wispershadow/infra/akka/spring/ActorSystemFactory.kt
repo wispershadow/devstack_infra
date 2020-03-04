@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import org.springframework.context.ApplicationContext
 import org.springframework.context.ApplicationContextAware
 
-
-class ActorSystemFactory: ApplicationContextAware {
+class ActorSystemFactory : ApplicationContextAware {
     private lateinit var applicationContext: ApplicationContext
 
     override fun setApplicationContext(applicationContext: ApplicationContext) {

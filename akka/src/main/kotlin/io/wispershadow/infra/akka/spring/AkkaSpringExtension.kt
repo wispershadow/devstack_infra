@@ -5,8 +5,7 @@ import org.springframework.context.ApplicationContext
 import org.apache.commons.lang3.RandomStringUtils
 import akka.routing.FromConfig
 
-
-class AkkaSpringExtension: AbstractExtensionId<AkkaSpringExtension.SpringExt>() {
+class AkkaSpringExtension : AbstractExtensionId<AkkaSpringExtension.SpringExt>() {
     companion object {
         val provider: AkkaSpringExtension by lazy(LazyThreadSafetyMode.PUBLICATION) {
             AkkaSpringExtension()
@@ -21,8 +20,7 @@ class AkkaSpringExtension: AbstractExtensionId<AkkaSpringExtension.SpringExt>() 
         return SpringExt(system)
     }
 
-
-    class SpringExt(private val actorSystem: ActorSystem): Extension {
+    class SpringExt(private val actorSystem: ActorSystem) : Extension {
         @Volatile
         private lateinit var applicationContext: ApplicationContext
 
@@ -70,7 +68,7 @@ class AkkaSpringExtension: AbstractExtensionId<AkkaSpringExtension.SpringExt>() 
         /**
          * Creates an actor that is configured as a Spring Bean
          *
-         * @param beanName  name of the spring bean actor
+         * @param beanName name of the spring bean actor
          * @param actorName name to give to the actor in the actor system.
          * @return actor matching the name in the Spring configuration
          */
@@ -81,7 +79,7 @@ class AkkaSpringExtension: AbstractExtensionId<AkkaSpringExtension.SpringExt>() 
         /**
          * Creates an actor that is configured as a Spring Bean
          *
-         * @param beanName  name of the spring bean actor
+         * @param beanName name of the spring bean actor
          * @param actorName name to give to the actor in the actor system. However because the actor name should be unique, this
          * is rather a prefix to the actor name. It's guaranteed the actor name will start with this value but the end of the actor
          * name will be random. To match this actor's name in the actor system configuration use wild cards. For example, if you
@@ -92,5 +90,4 @@ class AkkaSpringExtension: AbstractExtensionId<AkkaSpringExtension.SpringExt>() 
             return actorSystem.actorOf(props(beanName), actorName + "-" + RandomStringUtils.randomAlphabetic(6))
         }
     }
-
 }

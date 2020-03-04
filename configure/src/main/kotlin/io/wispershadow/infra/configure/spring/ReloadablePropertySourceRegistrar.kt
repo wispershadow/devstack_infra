@@ -22,6 +22,7 @@ import java.util.*
 class ReloadablePropertySourceRegistrar : EnvironmentPostProcessor {
     companion object {
         val RELOADABLE_PROPERTYSOURCE_KEY = "RELOADABLE"
+        val PREFIX = "R_"
         private val DEFAULT_PROPERTIES = "defaultProperties"
         private val BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap"
         private val logger: Logger = LoggerFactory.getLogger(ReloadablePropertySourceRegistrar::class.java)
@@ -35,13 +36,17 @@ class ReloadablePropertySourceRegistrar : EnvironmentPostProcessor {
             return
         }
         var context: ConfigurableApplicationContext? = null
-        for (initializer in application.initializers) {
-            if (initializer is ParentContextApplicationContextInitializer) {
-                context = findBootstrapContext(initializer)
+        try {
+            for (initializer in application.initializers) {
+                if (initializer is ParentContextApplicationContextInitializer) {
+                    context = findBootstrapContext(initializer)
+                }
             }
-        }
-        if (context == null) {
-            context = bootstrapServiceContext(environment, application)
+            if (context == null) {
+                context = bootstrapServiceContext(environment, application)
+            }
+        } catch (e: Exception) {
+            logger.error("Error processing reloadable property source", e)
         }
     }
 
@@ -105,7 +110,7 @@ class ReloadablePropertySourceRegistrar : EnvironmentPostProcessor {
             this.id = "bootstrap"
             addAncestorInitializer(application, this)
             // It only has properties in it now that we don't want in the parent so remove
-// it       (and it will be added back later)
+            // it  (and it will be added back later)
             bootstrapProperties.remove(BOOTSTRAP_PROPERTY_SOURCE_NAME)
             mergeDefaultProperties(environment.propertySources, bootstrapProperties)
         }

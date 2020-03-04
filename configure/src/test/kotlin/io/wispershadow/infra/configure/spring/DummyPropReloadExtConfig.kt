@@ -11,7 +11,9 @@ class DummyPropReloadExtConfig {
 }
 
 class DummyReloadablePropertySourceBuilder : ReloadablePropertySourceBuilder {
-    override fun build(): Map<String, Any> {
-        return mapOf("core.additional.value1" to "override", "core.property1" to "good")
+    override fun build(applicationName: String?, activeProfiles: List<String>): List<ReloadablePropertySource> {
+        val propMap = mapOf("core.additional.value1" to "override", "core.property1" to "good")
+        val reloadablePropertySource = ReloadablePropertySource("R_dev", propMap)
+        return listOf(reloadablePropertySource)
     }
 }

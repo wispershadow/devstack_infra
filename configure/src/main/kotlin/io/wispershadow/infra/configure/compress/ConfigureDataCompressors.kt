@@ -55,7 +55,7 @@ object ConfigureDataCompressors {
     fun compress(compressor: ConfigureDataCompressor, data: ByteArray): ByteArray {
         val outputStream = getOutputStream()
         return try {
-            outputStream.write(compressor.code as Int)
+            outputStream.write(compressor.code.toInt())
             outputStream.write(MAGIC_NUMBER)
             compressor.compress(outputStream, data, 0, data.size)
             outputStream.toByteArray()
@@ -94,7 +94,7 @@ object ConfigureDataCompressors {
     }
 
     private fun getOutputStream(): ByteArrayOutputStream {
-        return ByteArrayOutputStream()
+        return ByteArrayOutputStream(1024 * 1024)
     }
 
     private fun releaseOutputStream(outputStream: ByteArrayOutputStream) {

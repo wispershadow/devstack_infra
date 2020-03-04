@@ -5,7 +5,7 @@ import akka.actor.UntypedAbstractActor
 import io.wispershadow.infra.raft.server.log.RaftLogEntry
 import java.util.*
 
-class LogManagerActor(logFileName: String): UntypedAbstractActor() {
+class LogManagerActor(logFileName: String) : UntypedAbstractActor() {
     class AppendLogEntriesMessage(val entries: List<RaftLogEntry>)
 
     class TailLogEntryRequestMessage
@@ -33,7 +33,6 @@ class LogManagerActor(logFileName: String): UntypedAbstractActor() {
 
     class TruncateLogRequestMessage(val index: Long, val term: Long)
 
-
     companion object {
         fun props(logFileName: String): Props {
             return Props.create(LogManagerActor::class.java) {
@@ -42,27 +41,22 @@ class LogManagerActor(logFileName: String): UntypedAbstractActor() {
         }
     }
 
-
-
     override fun onReceive(message: Any?) {
         when (message) {
             is AppendLogEntriesMessage -> handleAppendLogEntries(message)
             is TailLogEntryRequestMessage -> {
                 val tailLogEntryOptional = handleTailLogEntryRequest(message)
-                tailLogEntryOptional.map {tailEntry ->
+                tailLogEntryOptional.map { tailEntry ->
                     context.sender.tell(TailLogEntryResponseMessage.fromLogEntry(tailEntry), self())
                 }.orElseGet {
                     context.sender.tell(TailLogEntryResponseMessage.EMPTY_RESPONSE, self())
                 }
             }
             is LogEntryByIndexRequestMessage -> {
-
             }
             is LogEntryMatchRequestMessage -> {
-
             }
             is TruncateLogRequestMessage -> {
-
             }
         }
     }

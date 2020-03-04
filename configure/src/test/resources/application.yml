@@ -1,6 +1,8 @@
 core:
   property1: "value1"
   property2: "value2"
+  nestedConfigList:
+    - "n1"
   additional:
     value1: "whatever"
 

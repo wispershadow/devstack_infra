@@ -4,5 +4,4 @@ class LogEntryMatchResult(val matched: Boolean, val largestTermNgRequest: Long, 
     companion object {
         val MATCHED = LogEntryMatchResult(true, -1, -1)
     }
-
 }

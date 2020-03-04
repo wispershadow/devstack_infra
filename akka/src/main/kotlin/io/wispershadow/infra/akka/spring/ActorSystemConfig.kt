@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-//note: all actor beans in spring config must be of scope prototype
+// note: all actor beans in spring config must be of scope prototype
 class ActorSystemConfig {
     companion object {
         private const val ACTOR_SYSTEM_NAME = "actorSystem"
@@ -29,5 +29,4 @@ class ActorSystemConfig {
     fun akkaServiceFactory(defaultTimeout: Long, actorCreatorService: ActorCreatorService): AkkaServiceFactory {
         return AkkaServiceFactory(defaultTimeout, actorCreatorService)
     }
-
 }

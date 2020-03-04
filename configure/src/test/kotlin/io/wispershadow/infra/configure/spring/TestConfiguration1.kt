@@ -8,4 +8,6 @@ import org.springframework.context.annotation.Configuration
 class TestConfiguration1 {
     var property1: String? = null
     var property2: String? = null
+    var nestedConfigList: List<String> = emptyList()
+    var configMap: Map<String, Map<String, Integer>> = emptyMap()
 }
