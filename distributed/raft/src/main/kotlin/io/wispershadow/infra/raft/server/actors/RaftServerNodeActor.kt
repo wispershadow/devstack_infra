@@ -84,12 +84,25 @@ class RaftServerNodeActor : AbstractActor() {
         headerMap.clear()
     }
 
-    private fun handleAppendRpcResponse() {
+    private fun handleRaftRcpRequest(raftRpcRequest: RaftRpcRequest) {
+        val requestTerm = raftRpcRequest.term
+        val currentTerm = currentServerNodeState.currentTerm()
+        if (requestTerm > currentTerm) {
+
+            cleanUpPrevTermSchedulers(requestTerm)
+            // if any error occurs before this step
+        }
+
     }
+
+    private fun handleRaftRpcResponse(raftRpcResponse: RaftRpcResponse) {
+
+    }
+
 
     private fun newElectionOnTimeout() {
         val curTerm = currentServerNodeState.currentTerm()
-        val newTerm = increaseTerm(curTerm,
+        val newTerm = updateTerm(curTerm,
                 currentServerNodeState.serverId, RaftServerRole.CANDIDATE)
         log.info("Raft server: {} becomes candidate for term: {}", currentServerNodeState.serverId,
                 newTerm)
@@ -98,10 +111,11 @@ class RaftServerNodeActor : AbstractActor() {
     }
 
     /*
-     Increase term by 1 and must call persistStateManager to persist it
-     New role will be either Leader or Follower depending on the increasing term is started by
+     Set term and must call persistStateManager to persist it
+     New role will be either Candidate or Follower depending on the increasing term is started by election timeout or
+     RPC request/response with higher term
      */
-    private fun increaseTerm(curTerm: Long, serverId: String, newRole: RaftServerRole): Long {
+    private fun updateTerm(curTerm: Long, serverId: String, newRole: RaftServerRole): Long {
         return 0
     }
 }
